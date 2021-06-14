@@ -1,31 +1,58 @@
 import React, { useEffect, useState } from "react";
-
+import axiosWithAuth from "../helpers/axiosWithAuth";
 import Bubbles from "./Bubbles";
 import ColorList from "./ColorList";
+import axios from "axios";
 
-import { editColorService, deleteColorService } from '../services/colorServices';
-import fetchColorService from '../services/fetchColorService';
+/*import {
+	editColorService,
+	deleteColorService,
+} from "../services/colorServices";*/
+import fetchColorService, {
+	editColorService,
+	deleteColorService,
+} from "../services/fetchColorService";
 
 const BubblePage = () => {
-  const [colors, setColors] = useState([]);
-  const [editing, setEditing] = useState(false);
+	const [colors, setColors] = useState([]);
+	const [editing, setEditing] = useState(false);
+	useEffect(() => {
+		fetchColorService().then(res => {
+			setColors(res.data);
+		});
+	}, []);
 
-  const toggleEdit = (value) => {
-    setEditing(value);
-  };
+	const toggleEdit = value => {
+		setEditing(value);
+	};
 
-  const saveEdit = (editColor) => {
-  };
+	const saveEdit = editColor => {};
 
-  const deleteColor = (colorToDelete) => {
-  };
+	const deleteColor = colorToDelete => {
+		axiosWithAuth()
+			.delete(`http://localhost:5000/api/colors/${colorToDelete.id}`)
+			.then(res => {
+				console.log(res);
+			})
+			.catch(err => err);
 
-  return (
-    <div className="container">
-      <ColorList colors={colors} editing={editing} toggleEdit={toggleEdit} saveEdit={saveEdit} deleteColor={deleteColor}/>
-      <Bubbles colors={colors}/>
-    </div>
-  );
+		fetchColorService().then(res => {
+			setColors(res.data);
+		});
+	};
+
+	return (
+		<div className="container">
+			<ColorList
+				colors={colors}
+				editing={editing}
+				toggleEdit={toggleEdit}
+				saveEdit={saveEdit}
+				deleteColor={deleteColor}
+			/>
+			<Bubbles colors={colors} />
+		</div>
+	);
 };
 
 export default BubblePage;
