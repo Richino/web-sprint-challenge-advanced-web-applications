@@ -10,7 +10,7 @@ const Login = () => {
 		username: "",
 		password: "",
 	});
-	const [msg, setErrorMessage] = useState("");
+	const [errorMessage, setErrorMessage] = useState("");
 
 	//replace with error state
 	const handleChange = e => {
@@ -70,7 +70,7 @@ const Login = () => {
 			</div>
 
 			<p data-testid="errorMessage" className="error">
-				{msg}
+				{errorMessage}
 			</p>
 		</div>
 	);
