@@ -10,7 +10,7 @@ const Login = () => {
 		username: "",
 		password: "",
 	});
-	const [errorMessage, setErrorMessage] = useState();
+	const [msg, setErrorMessage] = useState("");
 
 	//replace with error state
 	const handleChange = e => {
@@ -19,18 +19,23 @@ const Login = () => {
 
 	const submit = e => {
 		e.preventDefault();
+		axiosWithAuth()
+			.post("/login", credentials)
+			.then(res => {
+				// console.log('AB: Login.js: handleSubmit: res', res)
+				localStorage.setItem("token", res.data.payload);
+				history.push("/home");
+			})
+			.catch(err =>
+				console.log("AB: Login.js: handleSubmit: Error", err.message)
+			);
 		if (credentials.username === "" || credentials.password === "") {
-			setErrorMessage("Username or Password is not valid");
-		} else {
-			axiosWithAuth()
-				.post("/login", credentials)
-				.then(res => {
-					localStorage.setItem("token", res.data.payload);
-					history.push("/home");
-				})
-				.catch(() =>
-					setErrorMessage("Username or Password is not valid")
-				);
+			setErrorMessage("Username and password are required");
+		} else if (
+			credentials.username !== "Lambda" ||
+			credentials.password !== "School"
+		) {
+			setErrorMessage("Incorrect username or password");
 		}
 	};
 
@@ -65,7 +70,7 @@ const Login = () => {
 			</div>
 
 			<p data-testid="errorMessage" className="error">
-				{errorMessage}
+				{msg}
 			</p>
 		</div>
 	);
